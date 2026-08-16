@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Debe coincidir EXACTAMENTE con la lista ADMIN_EMAILS de script.js
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'admin@elrecetario.com'
+        ];
+    }
+
+    function isOwner(data) {
+      return request.auth != null &&
+        request.auth.token.email == data.autorEmail;
+    }
+
+    match /recetas/{recetaId} {
+      // Cualquier persona (incluso sin iniciar sesión) puede LEER las recetas
+      allow read: if true;
+
+      // Solo alguien con sesión iniciada puede crear, y debe quedar
+      // registrado como el autor de su propio correo (nadie puede
+      // publicar una receta a nombre de otra persona).
+      allow create: if request.auth != null &&
+                       request.resource.data.autorEmail == request.auth.token.email;
+
+      // Solo el dueño de la receta o un administrador pueden editar o borrar.
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+  }
+}

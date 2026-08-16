@@ -1,63 +1,74 @@
 # El Recetario 🥄
 
-Blog de recetas (comida y dulces) hecho con HTML, CSS y JavaScript puro. Sin frameworks, sin servicios de pago.
+Blog de recetas (comida y dulces) hecho con HTML, CSS y JavaScript puro, con **Firebase** como base de datos y sistema de cuentas compartido. Sin frameworks, sin servicios de pago.
 
 ## Archivos
 - `index.html` — estructura de la página
 - `style.css` — todos los estilos (colores, tipografía, diseño)
-- `script.js` — toda la lógica (guardar recetas, filtros, subir fotos/video, contacto)
+- `script.js` — toda la lógica (Firebase, filtros, subir fotos/video, PDF, visitas, contacto)
+- `firestore.rules` — reglas de seguridad que debes pegar en la consola de Firebase
 
 ## Cómo abrirlo en Visual Studio Code
-1. Descarga los 3 archivos (más este README) en una misma carpeta, por ejemplo `recetario/`.
-2. Abre esa carpeta en VS Code: **Archivo → Abrir carpeta…**
+1. Descarga los archivos en una misma carpeta, por ejemplo `recetario/`.
+2. Abre esa carpeta en VS Code: **Archivo → Abrir carpeta…** (no "Abrir archivo", tiene que ser la carpeta completa).
 3. Instala la extensión gratuita **Live Server** (de Ritwick Dey) desde la pestaña de extensiones.
 4. Haz clic derecho sobre `index.html` → **Open with Live Server**.
-5. Se abrirá en tu navegador en una dirección tipo `http://127.0.0.1:5500`.
 
-También puedes abrir `index.html` directamente con doble clic desde el explorador de archivos, aunque con Live Server las recargas automáticas al editar el código funcionan mejor.
-
-## Qué incluye
-- **Inicio**: sección de bienvenida con un "corcho" decorativo de recetas.
-- **Recetas**: galería con filtro por *Todas / Comida / Dulces* y buscador por nombre o ingrediente. Al hacer clic en una tarjeta se abre el detalle completo (foto, ingredientes, pasos y video).
-- **Compartir**: formulario para publicar una receta nueva con nombre, categoría, ingredientes, pasos, varias fotos y un video (dos formas: subir archivo o pegar enlace de YouTube).
-- **Contacto**: formulario que abre el correo del visitante con el mensaje ya redactado (`mailto:`), y el correo de contacto visible directamente.
+## Configurar Firebase (paso a paso)
+1. Entra a [console.firebase.google.com](https://console.firebase.google.com) → **Agregar proyecto**. No pide tarjeta.
+2. **Authentication** → "Comenzar" → pestaña "Sign-in method" → activa **Correo electrónico/contraseña**.
+3. **Firestore Database** → "Crear base de datos" → modo de prueba está bien para empezar (luego pegas las reglas de seguridad).
+4. En la página principal del proyecto, clic en el icono **"</>"** (Web) para registrar tu app. Ponle un nombre y **NO actives Firebase Hosting** (ya usamos GitHub Pages).
+5. Copia el objeto `firebaseConfig` que te muestra Firebase.
+6. Abre `script.js` en VS Code y reemplaza el bloque `firebaseConfig` cerca del inicio del archivo con el tuyo:
+   ```js
+   const firebaseConfig = {
+     apiKey: "...",
+     authDomain: "...",
+     projectId: "...",
+     storageBucket: "...",
+     messagingSenderId: "...",
+     appId: "..."
+   };
+   ```
+7. En la consola de Firebase, ve a **Firestore Database → Reglas**, borra lo que haya y pega el contenido completo de `firestore.rules`. Publica los cambios.
+8. Sube (o vuelve a subir) los archivos actualizados a tu repositorio de GitHub para que la web publicada también use Firebase.
 
 ## Usuario administrador
-Hay un correo especial con permisos de **administrador**: puede editar y eliminar **cualquier** receta, no solo las suyas (verás los botones ✏️ y 🗑 en todas las tarjetas, marcados como "(admin)" en el detalle).
+Hay un correo con permisos de **administrador**: puede editar y eliminar **cualquier** receta.
 
-Para activarlo:
-1. Abre `script.js` y busca la constante `ADMIN_EMAILS` cerca del inicio del archivo.
-2. Cambia `"admin@elrecetario.com"` por tu propio correo (el mismo con el que vas a registrarte en la web). Puedes agregar más de uno separados por coma: `["tucorreo@gmail.com", "otroadmin@correo.com"]`.
-3. Regístrate en la web con ese correo — automáticamente tendrás permisos de administrador.
+⚠️ Debes cambiarlo en **dos lugares** para que quede sincronizado:
+1. En `script.js`, la constante `ADMIN_EMAILS`.
+2. En `firestore.rules`, dentro de la función `isAdmin()` (y volver a publicar las reglas en la consola de Firebase).
 
-⚠️ Recuerda que este sistema de cuentas es solo del navegador (ver nota de seguridad más abajo), así que "administrador" aquí significa "correo con permisos especiales dentro de esta app", no una cuenta protegida por un servidor real.
+Regístrate en la web con ese correo y automáticamente tendrás el rol de administrador.
 
-## Inicio de sesión y publicación
-Para compartir una receta ahora hay que **registrarse** (nombre, correo y contraseña) e **iniciar sesión**. Cada receta queda asociada al correo de quien la publicó, y solo esa persona ve los botones ✏️ **Editar** y 🗑 **Eliminar** en su propia receta (en la tarjeta y dentro del detalle).
+*(Esta lista de correos "a mano" es la forma más simple de tener administradores sin pagar por funciones extra de Firebase. Si el proyecto crece mucho, se puede automatizar con Cloud Functions, que sí requiere el plan de pago por uso.)*
 
-⚠️ **Importante sobre esta cuenta**: es un inicio de sesión "de mentira" pensado para practicar el flujo, no un sistema de seguridad real. Los usuarios y contraseñas se guardan en `localStorage`, en texto codificado pero **no cifrado de verdad**, y solo existen en tu navegador — nadie más los ve, pero tampoco es seguro para contraseñas que uses en otros sitios. Si más adelante quieres que el registro sea real y compartido entre dispositivos, se necesita un backend con autenticación de verdad (por ejemplo, Firebase Authentication, gratuito en su capa básica) — puedo ayudarte con ese paso cuando quieras.
+## Qué cambió respecto a la versión anterior (localStorage)
+Ahora las recetas y las cuentas se guardan en una base de datos real (Firestore) y en Firebase Authentication:
+- **Antes**: cada quien veía solo lo que había guardado en su propio navegador.
+- **Ahora**: todas las personas que entren a la web ven las mismas recetas, en tiempo real (si alguien publica una receta, aparece al instante en las pantallas de los demás visitantes).
+
+Dos límites que se mantienen por seguir siendo 100% gratis (sin tarjeta):
+- **Fotos**: máximo 3 por receta, se comprimen automáticamente y se guardan como texto dentro del propio documento (no se usa Firebase Storage, que hoy exige una tarjeta vinculada aunque no cobre).
+- **Video**: solo se admite como enlace de YouTube (ya no se puede subir el archivo directamente), por la misma razón — no hay dónde guardar el archivo de video sin Storage.
 
 ## Descargar receta en PDF
-Dentro del detalle de cada receta hay un botón **"📄 Descargar receta en PDF"**. Genera el PDF en el propio navegador (con la librería gratuita [jsPDF](https://github.com/parallax/jsPDF), cargada desde un CDN público) e incluye título, categoría, autor, tiempo, descripción, ingredientes, pasos y la primera foto si tiene.
-
-Si la persona **no ha iniciado sesión**, al hacer clic se cierra el detalle y se abre automáticamente el formulario de inicio de sesión/registro — solo después de entrar puede descargar.
+Dentro del detalle de cada receta hay un botón "📄 Descargar receta en PDF" (usa la librería gratuita jsPDF). Si la persona no ha iniciado sesión, se abre automáticamente el login/registro.
 
 ## Contador de visitas
-Arriba en el encabezado y en la sección de inicio verás un número de visitas que sube cada vez que alguien entra al sitio. Usa **CountAPI** (`https://api.countapi.xyz`), un servicio externo gratuito y sin registro que lleva la cuenta de forma compartida entre todas las personas que visiten la web, no solo en tu navegador.
+Sigue funcionando igual que antes, con el servicio externo gratuito CountAPI — es independiente de Firebase. Recuerda cambiar `VISIT_NAMESPACE` en `script.js` por algo único tuyo antes de publicar.
 
-⚠️ Dos cosas a tener en cuenta:
-- Es un servicio de terceros gratuito, así que no hay garantía absoluta de que esté siempre disponible. Si en algún momento no responde, el sitio muestra un conteo de respaldo guardado en `localStorage` (marcado como "solo tu navegador") para no dejar el número en blanco.
-- Antes de publicar el sitio en internet, cambia la constante `VISIT_NAMESPACE` en `script.js` por algo único (por ejemplo, tu dominio), para que tu contador no se mezcle con el de otro proyecto que use el mismo nombre por casualidad.
+## Publicar en internet gratis (GitHub Pages)
+1. Crea una cuenta en [github.com](https://github.com) (gratis).
+2. Crea un repositorio nuevo, público, por ejemplo `recetario`.
+3. Sube `index.html`, `style.css`, `script.js` y `README.md` (ya con tu `firebaseConfig` puesto).
+4. En el repositorio: **Settings → Pages** → rama `main`, carpeta `/ (root)` → guardar.
+5. Tu web queda publicada en `https://tuusuario.github.io/recetario/`.
+6. (Opcional) Si compras un dominio propio, en la misma sección "Pages" puedes ponerlo en "Custom domain" y apuntar los DNS a las IPs de GitHub.
 
-## Sobre las fotos y el video (importante)
-Todo se guarda en el navegador con `localStorage`, así que las recetas persisten aunque cierres y vuelvas a abrir la página **en ese mismo navegador y dispositivo**.
-
-- Las **fotos** se comprimen automáticamente y se guardan sin problema.
-- El **video**, si lo subes como archivo, es demasiado pesado para guardarse de forma permanente en el navegador: se ve perfecto mientras dura la sesión, pero se pierde al recargar la página. Por eso el formulario también ofrece la opción de **pegar un enlace de YouTube** (puedes subir el video como "oculto" en YouTube, es gratis) — esa opción sí queda guardada para siempre.
-
-Si más adelante quieres que las recetas se compartan entre distintas personas y dispositivos (no solo en tu navegador), vas a necesitar una base de datos real y un pequeño servidor (por ejemplo, Firebase en su capa gratuita). Puedo ayudarte a dar ese paso cuando quieras.
-
-## Personalizar
-- **Correo de contacto**: cambia la constante `CONTACT_EMAIL` al inicio de `script.js` (y el texto del enlace en `index.html` si quieres).
-- **Colores**: están todos definidos como variables al inicio de `style.css`, dentro de `:root`.
-- **Texto de bienvenida / recetas de ejemplo**: edítalos en `index.html` y en la función `seedIfEmpty()` de `script.js`.
+## Seguridad — qué es real y qué no
+- El **login ahora sí es real**: Firebase Authentication protege las contraseñas de verdad (no las ve nadie, ni siquiera tú desde la consola).
+- Las **reglas de Firestore** (`firestore.rules`) son las que de verdad impiden que alguien edite o borre una receta ajena — no basta con ocultar los botones en el diseño, por eso es indispensable pegarlas en la consola.
+- Sigue siendo un proyecto pensado para aprender y para uso personal/pequeño: dentro del plan gratuito de Firebase (Spark) hay límites generosos de uso diario, pero si la web crece mucho conviene revisar la [documentación de precios de Firebase](https://firebase.google.com/pricing).

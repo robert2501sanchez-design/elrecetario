@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- ===== FIREBASE (base de datos e inicio de sesión compartidos) ===== -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -85,7 +90,7 @@
         <span class="form-msg" id="registerMsg"></span>
       </form>
 
-      <p class="hint hint--block auth-hint">Esta cuenta se guarda solo en este navegador (no es un sistema de seguridad real). No uses una contraseña que también uses en otro lugar.</p>
+      <p class="hint hint--block auth-hint">Tu cuenta y contraseña quedan protegidas por Firebase Authentication (Google), no por este sitio.</p>
     </div>
   </div>
 </div>
@@ -211,7 +216,7 @@
         </div>
 
         <div class="field field--full">
-          <label>Fotos del plato <span class="hint">(puedes elegir varias)</span></label>
+          <label>Fotos del plato <span class="hint">(hasta 3, se guardan comprimidas)</span></label>
           <label class="upload-box" for="rPhotos">
             <input type="file" id="rPhotos" name="fotos" accept="image/*" multiple hidden>
             <span class="upload-icon">📷</span>
@@ -221,26 +226,9 @@
         </div>
 
         <div class="field field--full">
-          <label>Video corto del proceso <span class="hint">(opcional)</span></label>
-          <div class="video-tabs">
-            <button type="button" class="video-tab is-active" data-tab="file">Subir archivo</button>
-            <button type="button" class="video-tab" data-tab="link">Pegar enlace (YouTube)</button>
-          </div>
-
-          <div class="video-tab-panel" id="panel-file">
-            <label class="upload-box upload-box--video" for="rVideoFile">
-              <input type="file" id="rVideoFile" name="videoArchivo" accept="video/*" hidden>
-              <span class="upload-icon">🎬</span>
-              <span>Elige un video corto de tu dispositivo</span>
-            </label>
-            <p class="hint hint--block">Este video se guarda solo en tu navegador durante la sesión actual (no queda guardado para siempre). Para que el video se conserve, usa mejor la opción de enlace.</p>
-          </div>
-
-          <div class="video-tab-panel" id="panel-link" hidden>
-            <input type="url" id="rVideoLink" name="videoLink" placeholder="https://www.youtube.com/watch?v=...">
-            <p class="hint hint--block">Sube tu video a YouTube (gratis, aunque sea como "oculto") y pega aquí el enlace: así el video queda guardado de verdad.</p>
-          </div>
-
+          <label>Video corto del proceso <span class="hint">(opcional, enlace de YouTube)</span></label>
+          <input type="url" id="rVideoLink" name="videoLink" placeholder="https://www.youtube.com/watch?v=...">
+          <p class="hint hint--block">Sube tu video a YouTube (gratis, aunque sea como "oculto") y pega aquí el enlace, así se mostrará a todas las personas que visiten la web.</p>
           <div class="preview-row" id="videoPreview"></div>
         </div>
       </div>
@@ -295,7 +283,7 @@
 <footer class="site-footer">
   <div class="wrap footer-inner">
     <p>🥄 El Recetario — hecho con cariño y muchas ganas de comer.</p>
-    <p class="footer-small">Las recetas se guardan en tu navegador (localStorage), en este dispositivo.</p>
+    <p class="footer-small">Las recetas se guardan en una base de datos compartida (Firebase): las ve cualquier persona que visite la web.</p>
     <p class="footer-rights">Derechos de desarrollador reservados - Ing. Robert Sanchez</p>
   </div>
 </footer>
