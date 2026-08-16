@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Recetario — comida y dulces para compartir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a href="#inicio" class="logo">
+      <span class="logo-mark">🥄</span>
+      <span class="logo-text">El Recetario</span>
+    </a>
+    <nav class="nav" id="mainNav">
+      <a href="#inicio">Inicio</a>
+      <a href="#recetas">Recetas</a>
+      <a href="#compartir">Compartir</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="header-actions">
+      <span class="live-badge" id="liveBadge" title="Visitas totales a la web">
+        <span class="live-dot"></span> <span id="liveVisits">…</span>
+      </span>
+      <div class="auth-buttons" id="authButtons">
+        <button class="btn btn-ghost btn-sm" id="btnShowLogin">Iniciar sesión</button>
+        <button class="btn btn-primary btn-sm" id="btnShowRegister">Registrarse</button>
+      </div>
+      <div class="user-area" id="userArea" hidden>
+        <span class="user-greeting" id="userGreeting"></span>
+        <button class="btn btn-ghost btn-sm" id="btnLogout">Cerrar sesión</button>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MODAL DE LOGIN / REGISTRO ===== -->
+<div class="modal-overlay" id="authOverlay">
+  <div class="modal auth-modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="authClose" aria-label="Cerrar">✕</button>
+    <div class="modal-content auth-content">
+      <div class="video-tabs auth-tabs">
+        <button type="button" class="video-tab is-active" data-authtab="login">Iniciar sesión</button>
+        <button type="button" class="video-tab" data-authtab="register">Registrarse</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <div class="field">
+          <label for="loginEmail">Correo electrónico</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="field">
+          <label for="loginPass">Contraseña</label>
+          <input type="password" id="loginPass" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+        <span class="form-msg" id="loginMsg"></span>
+      </form>
+
+      <form id="registerForm" class="auth-form" hidden>
+        <div class="field">
+          <label for="regName">Nombre</label>
+          <input type="text" id="regName" required>
+        </div>
+        <div class="field">
+          <label for="regEmail">Correo electrónico</label>
+          <input type="email" id="regEmail" required>
+        </div>
+        <div class="field">
+          <label for="regPass">Contraseña</label>
+          <input type="password" id="regPass" required minlength="4">
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Crear cuenta</button>
+        <span class="form-msg" id="registerMsg"></span>
+      </form>
+
+      <p class="hint hint--block auth-hint">Esta cuenta se guarda solo en este navegador (no es un sistema de seguridad real). No uses una contraseña que también uses en otro lugar.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <p class="eyebrow">Tu corcho de recetas, en internet</p>
+      <h1>Comida que abraza,<br> dulces que enamoran.</h1>
+      <p class="hero-sub">Comparte tus recetas favoritas con fotos y un video corto del paso a paso. Un lugar para guardar lo que se cocina en casa — y descubrir lo que se cocina en las demás.</p>
+      <div class="hero-actions">
+        <a href="#recetas" class="btn btn-primary">Ver recetas</a>
+        <a href="#compartir" class="btn btn-ghost">Compartir la mía</a>
+      </div>
+      <div class="hero-stats" id="heroStats">
+        <div><strong id="statTotal">0</strong><span>recetas</span></div>
+        <div><strong id="statComida">0</strong><span>de comida</span></div>
+        <div><strong id="statDulce">0</strong><span>de dulces</span></div>
+        <div class="stat-visits"><strong id="statVisits">…</strong><span>👀 visitas a la web</span></div>
+      </div>
+    </div>
+
+    <div class="hero-board" aria-hidden="true">
+      <div class="pin-card card-1">
+        <span class="washi"></span>
+        <div class="pin-photo pin-photo--1">🍲</div>
+        <p class="pin-title">Sopa de la abuela</p>
+      </div>
+      <div class="pin-card card-2">
+        <span class="washi"></span>
+        <div class="pin-photo pin-photo--2">🍩</div>
+        <p class="pin-title">Donas glaseadas</p>
+      </div>
+      <div class="pin-card card-3">
+        <span class="pin-dot"></span>
+        <div class="pin-photo pin-photo--3">🍰</div>
+        <p class="pin-title">Pastel de zanahoria</p>
+      </div>
+      <div class="hero-note">
+        <span>¡nuevas recetas cada semana!</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-divider"></div>
+</section>
+
+<!-- ===== RECETAS ===== -->
+<section class="recetas" id="recetas">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">El corcho compartido</p>
+      <h2>Recetas de la comunidad</h2>
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="chip is-active" data-filter="todas">Todas</button>
+      <button class="chip chip--comida" data-filter="comida">🥘 Comida</button>
+      <button class="chip chip--dulce" data-filter="dulce">🍰 Dulces</button>
+      <input type="search" id="searchInput" class="search-input" placeholder="Buscar por nombre o ingrediente…">
+    </div>
+
+    <div class="grid" id="recipeGrid"></div>
+    <p class="empty-state" id="emptyState" hidden>Todavía no hay recetas por aquí. ¡Sé la primera persona en compartir una! 👇</p>
+  </div>
+</section>
+
+<!-- ===== COMPARTIR / FORMULARIO ===== -->
+<section class="compartir" id="compartir">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Tu turno de cocinar</p>
+      <h2>Comparte tu receta</h2>
+      <p class="section-sub">Agrega fotos del plato terminado y, si quieres, un video corto mostrando el proceso.</p>
+    </div>
+
+    <div class="share-gate" id="shareGate">
+      <p>Debes iniciar sesión para compartir una receta.</p>
+      <div class="hero-actions">
+        <button type="button" class="btn btn-primary" id="gateLoginBtn">Iniciar sesión</button>
+        <button type="button" class="btn btn-ghost" id="gateRegisterBtn">Crear cuenta</button>
+      </div>
+    </div>
+
+    <form id="recipeForm" class="recipe-form" novalidate hidden>
+      <p class="form-editing-flag" id="editingFlag" hidden>✏️ Estás editando una receta ya publicada.</p>
+      <div class="form-grid">
+        <div class="field">
+          <label for="rTitle">Nombre de la receta</label>
+          <input type="text" id="rTitle" name="titulo" placeholder="Ej. Arepas rellenas de queso" required>
+        </div>
+
+        <div class="field">
+          <label>Categoría</label>
+          <div class="radio-row">
+            <label class="radio-pill radio-pill--comida">
+              <input type="radio" name="categoria" value="comida" checked> 🥘 Comida
+            </label>
+            <label class="radio-pill radio-pill--dulce">
+              <input type="radio" name="categoria" value="dulce"> 🍰 Dulce
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="rTime">Tiempo aproximado</label>
+          <input type="text" id="rTime" name="tiempo" placeholder="Ej. 40 min">
+        </div>
+
+        <div class="field field--full">
+          <label for="rDesc">Una pequeña historia o descripción</label>
+          <textarea id="rDesc" name="descripcion" rows="2" placeholder="¿Por qué te gusta esta receta?"></textarea>
+        </div>
+
+        <div class="field field--full">
+          <label for="rIngredients">Ingredientes <span class="hint">(uno por línea)</span></label>
+          <textarea id="rIngredients" name="ingredientes" rows="4" placeholder="2 tazas de harina&#10;1 cucharadita de sal&#10;..." required></textarea>
+        </div>
+
+        <div class="field field--full">
+          <label for="rSteps">Preparación <span class="hint">(un paso por línea)</span></label>
+          <textarea id="rSteps" name="pasos" rows="5" placeholder="Mezclar los ingredientes secos&#10;Añadir el agua tibia&#10;..." required></textarea>
+        </div>
+
+        <div class="field field--full">
+          <label>Fotos del plato <span class="hint">(puedes elegir varias)</span></label>
+          <label class="upload-box" for="rPhotos">
+            <input type="file" id="rPhotos" name="fotos" accept="image/*" multiple hidden>
+            <span class="upload-icon">📷</span>
+            <span>Arrastra o elige tus fotos</span>
+          </label>
+          <div class="preview-row" id="photoPreview"></div>
+        </div>
+
+        <div class="field field--full">
+          <label>Video corto del proceso <span class="hint">(opcional)</span></label>
+          <div class="video-tabs">
+            <button type="button" class="video-tab is-active" data-tab="file">Subir archivo</button>
+            <button type="button" class="video-tab" data-tab="link">Pegar enlace (YouTube)</button>
+          </div>
+
+          <div class="video-tab-panel" id="panel-file">
+            <label class="upload-box upload-box--video" for="rVideoFile">
+              <input type="file" id="rVideoFile" name="videoArchivo" accept="video/*" hidden>
+              <span class="upload-icon">🎬</span>
+              <span>Elige un video corto de tu dispositivo</span>
+            </label>
+            <p class="hint hint--block">Este video se guarda solo en tu navegador durante la sesión actual (no queda guardado para siempre). Para que el video se conserve, usa mejor la opción de enlace.</p>
+          </div>
+
+          <div class="video-tab-panel" id="panel-link" hidden>
+            <input type="url" id="rVideoLink" name="videoLink" placeholder="https://www.youtube.com/watch?v=...">
+            <p class="hint hint--block">Sube tu video a YouTube (gratis, aunque sea como "oculto") y pega aquí el enlace: así el video queda guardado de verdad.</p>
+          </div>
+
+          <div class="preview-row" id="videoPreview"></div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="submitRecipeBtn">Publicar receta</button>
+        <button type="button" class="btn btn-ghost" id="cancelEditBtn" hidden>Cancelar edición</button>
+        <span class="form-msg" id="formMsg"></span>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== CONTACTO ===== -->
+<section class="contacto" id="contacto">
+  <div class="wrap contacto-inner">
+    <div class="section-head section-head--left">
+      <p class="eyebrow">¿Tienes dudas, sugerencias o quieres colaborar?</p>
+      <h2>Escríbenos</h2>
+      <p class="section-sub">Completa el formulario y se abrirá tu correo con el mensaje listo para enviar. También puedes escribirnos directo a:</p>
+      <a class="contact-email" id="contactEmailLink" href="mailto:hola@elrecetario.com">hola@elrecetario.com</a>
+    </div>
+
+    <form id="contactForm" class="contact-form" novalidate>
+      <div class="field">
+        <label for="cName">Nombre</label>
+        <input type="text" id="cName" required>
+      </div>
+      <div class="field">
+        <label for="cEmail">Correo electrónico</label>
+        <input type="email" id="cEmail" required>
+      </div>
+      <div class="field">
+        <label for="cMsg">Mensaje</label>
+        <textarea id="cMsg" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+      <span class="form-msg" id="contactMsg"></span>
+    </form>
+  </div>
+</section>
+
+<!-- ===== MODAL DE RECETA ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>🥄 El Recetario — hecho con cariño y muchas ganas de comer.</p>
+    <p class="footer-small">Las recetas se guardan en tu navegador (localStorage), en este dispositivo.</p>
+    <p class="footer-rights">Derechos de desarrollador reservados - Ing. Robert Sanchez</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
