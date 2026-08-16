@@ -1,29 +1,3 @@
-/* =========================================================
-   EL RECETARIO — lógica de la aplicación (versión Firebase)
-   Las recetas y las cuentas ahora se guardan en una base de datos
-   compartida (Firestore) y en Firebase Authentication, así que
-   TODAS las personas que visiten la web ven las mismas recetas.
-
-   Las fotos se guardan comprimidas como texto (base64) dentro del
-   propio documento de la receta en Firestore — así evitamos usar
-   Firebase Cloud Storage, que hoy en día pide una tarjeta vinculada
-   aunque no cobre nada. Por eso limitamos a 3 fotos por receta.
-
-   El video solo se admite como enlace de YouTube (no como archivo),
-   por la misma razón: no hay dónde guardar el archivo sin Storage.
-========================================================= */
-
-/* =========================================================
-   1) CONFIGURA AQUÍ TU PROYECTO DE FIREBASE
-   Reemplaza estos valores por los que copiaste de la consola de
-   Firebase (Configuración del proyecto → tus apps → SDK de Firebase).
-========================================================= */
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAI0GU-Bx8e7XxWU-CAfajbrNO0g0-mELA",
   authDomain: "el-recetario-ac5b5.firebaseapp.com",
@@ -33,8 +7,6 @@ const firebaseConfig = {
   appId: "1:590184451966:web:1a5d89cd376d71e45c2d2f"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
