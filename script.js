@@ -660,17 +660,23 @@ navToggle.addEventListener("click", () => mainNav.classList.toggle("is-open"));
 mainNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mainNav.classList.remove("is-open")));
 
 /* =========================================================
-   Contador de visitas en tiempo real (CountAPI, servicio externo
-   gratuito, no requiere cuenta). Sigue funcionando igual que antes,
-   independiente de Firebase.
+   Contador de visitas en tiempo real.
+   Usábamos countapi.xyz, pero ese servicio dejó de existir. Lo
+   reemplazamos por countapi.mileshilliard.com, una versión hecha
+   por otro desarrollador con el mismo espíritu: gratis, sin cuenta
+   y sin necesidad de tarjeta.
+
+   IMPORTANTE si vas a publicar este sitio: cambia VISIT_KEY por
+   algo único (por ejemplo tu dominio), para que tu contador no se
+   mezcle con el de otro proyecto que use el mismo nombre — en este
+   servicio todas las claves son públicas y compartidas.
 ========================================================= */
-const VISIT_NAMESPACE = "elrecetario-robertsanchez-2026";
-const VISIT_KEY = "visitas";
+const VISIT_KEY = "elrecetario-robertsanchez-2026-visitas";
 
 async function trackVisit(){
   const targets = [document.getElementById("statVisits"), document.getElementById("liveVisits")];
   try{
-    const res = await fetch(`https://api.countapi.xyz/hit/${VISIT_NAMESPACE}/${VISIT_KEY}`);
+    const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/${VISIT_KEY}`);
     if(!res.ok) throw new Error("Respuesta no válida");
     const data = await res.json();
     const formatted = Number(data.value).toLocaleString("es");
